@@ -1,0 +1,6 @@
+flask>=3.1,<4.0
+numpy>=2.0,<3.0
+opencv-python>=4.9,<6.0
+pillow>=10.0,<13.0
+torch>=2.4,<3.0
+ultralytics>=8.3,<9.0

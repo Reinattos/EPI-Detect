@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Segredos e configuracoes locais
+.env
+.env.*
+!.env.example
+
+# IDE e sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Resultados e logs
+*.log
+resultado*.mp4
+runs/
+
+# Dataset local: pode conter imagens pessoais
+dataset_epi/raw/**
+
+# Videos locais podem conter pessoas ou ambientes privados
+demo/*.mp4
+
+# Pesos gerados durante treinamento
+*.pt
+models/.cache/
+models/*.onnx
+models/*.engine
+models/*.xml
+models/*.bin

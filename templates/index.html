@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPI Detect</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --bg: #070a0f;
+    --surface: #0d121a;
+    --surface-raised: #121925;
+    --surface-soft: rgba(18, 25, 37, .72);
+    --line: rgba(148, 163, 184, .14);
+    --line-strong: rgba(148, 163, 184, .24);
+    --text: #f8fafc;
+    --soft: #cbd5e1;
+    --muted: #94a3b8;
+    --muted-2: #64748b;
+    --green: #2dd47f;
+    --green-soft: rgba(45, 212, 127, .13);
+    --red: #ff5d64;
+    --red-soft: rgba(255, 93, 100, .13);
+    --yellow: #ffd43b;
+    --yellow-soft: rgba(255, 212, 59, .14);
+    --blue: #45c7ff;
+    --blue-soft: rgba(69, 199, 255, .13);
+    --shadow: 0 24px 70px rgba(0, 0, 0, .36);
+    --radius: 8px;
+  }
+
+  html { min-height: 100%; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(69, 199, 255, .14), transparent 27rem),
+      radial-gradient(circle at 88% 22%, rgba(45, 212, 127, .08), transparent 24rem),
+      linear-gradient(145deg, #070a0f 0%, #0a1018 52%, #070a0f 100%);
+    font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .45), transparent 74%);
+  }
+
+  .app-shell {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px clamp(18px, 3vw, 34px);
+    border-bottom: 1px solid var(--line);
+    background: rgba(7, 10, 15, .82);
+    backdrop-filter: blur(18px);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(45, 212, 127, .42);
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    color: var(--green);
+    background: linear-gradient(145deg, rgba(45, 212, 127, .18), rgba(69, 199, 255, .08));
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  .logo {
+    display: block;
+    font-size: 1.08rem;
+    font-weight: 850;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: .8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mode-badge,
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 8px 11px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgba(15, 23, 42, .7);
+    color: var(--soft);
+    font-size: .76rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .mode-badge {
+    text-transform: uppercase;
+  }
+
+  .mode-badge::before,
+  .status-dot {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 5px rgba(69, 199, 255, .12);
+  }
+
+  .badge-live::before {
+    background: var(--green);
+    box-shadow: 0 0 0 5px rgba(45, 212, 127, .12);
+    animation: status-pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes status-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(.72); opacity: .58; }
+  }
+
+  .topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: .82rem;
+  }
+
+  #clock,
+  #uptime,
+  .value,
+  .tab-count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  #alert-bar {
+    display: none;
+    padding: 12px clamp(18px, 3vw, 34px);
+    border-bottom: 1px solid rgba(255, 93, 100, .32);
+    color: #fff1f2;
+    background: linear-gradient(90deg, rgba(159, 18, 57, .96), rgba(185, 28, 28, .82));
+    font-size: .9rem;
+    font-weight: 850;
+    text-align: center;
+  }
+
+  #alert-bar.show { display: block; }
+
+  main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 390px);
+    gap: 18px;
+    min-height: 0;
+    padding: 18px clamp(18px, 3vw, 34px);
+  }
+
+  .workspace {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: auto minmax(380px, 1fr);
+    gap: 12px;
+  }
+
+  .workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .eyebrow {
+    margin-bottom: 5px;
+    color: var(--blue);
+    font-size: .72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    line-height: 1.08;
+  }
+
+  .workspace-header p {
+    margin: 7px 0 0;
+    max-width: 680px;
+    color: var(--muted);
+    font-size: .92rem;
+    line-height: 1.5;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .video-wrap {
+    position: relative;
+    min-height: 380px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: #020617;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .video-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, .06);
+  }
+
+  #stream {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: contain;
+    display: block;
+    background: #020617;
+  }
+
+  .video-hud {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: calc(100% - 28px);
+  }
+
+  .hud-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    background: rgba(2, 6, 23, .72);
+    color: var(--soft);
+    font-size: .78rem;
+    font-weight: 800;
+    backdrop-filter: blur(12px);
+  }
+
+  .hud-button {
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    min-height: 34px;
+    padding: 8px 11px;
+    background: rgba(2, 6, 23, .72);
+    color: var(--soft);
+    cursor: pointer;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 850;
+    backdrop-filter: blur(12px);
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+
+  .hud-button:hover {
+    border-color: rgba(69, 199, 255, .38);
+    background: rgba(69, 199, 255, .14);
+    color: var(--text);
+  }
+
+  .video-wrap:fullscreen {
+    border-radius: 0;
+    border: 0;
+    background: #000;
+  }
+
+  .video-wrap:fullscreen #stream {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+  }
+
+  .system-status {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(460px, calc(100% - 32px));
+    padding: 18px 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: rgba(15, 23, 42, .92);
+    color: var(--soft);
+    font-size: .92rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(14px);
+  }
+
+  .system-status.error {
+    border-color: rgba(255, 93, 100, .72);
+    color: #fecdd3;
+    background: rgba(76, 5, 25, .92);
+  }
+
+  .system-status.hidden { display: none; }
+
+  aside {
+    min-width: 0;
+    align-self: stretch;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(13, 18, 26, .86);
+    box-shadow: 0 16px 44px rgba(0, 0, 0, .22);
+    overflow: hidden;
+  }
+
+  .side-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .side-title {
+    display: grid;
+    gap: 2px;
+  }
+
+  .side-title strong {
+    font-size: .94rem;
+  }
+
+  .side-title span {
+    color: var(--muted);
+    font-size: .78rem;
+  }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(7, 10, 15, .36);
+  }
+
+  .tab-button {
+    min-height: 38px;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 850;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+  }
+
+  .tab-button:hover {
+    color: var(--soft);
+    background: rgba(148, 163, 184, .08);
+  }
+
+  .tab-button.active {
+    border-color: rgba(69, 199, 255, .32);
+    color: var(--text);
+    background: rgba(69, 199, 255, .12);
+  }
+
+  .tab-panel {
+    display: none;
+    padding: 14px;
+  }
+
+  .tab-panel.active {
+    display: grid;
+    gap: 12px;
+  }
+
+  .score-card,
+  .metric-card,
+  .event-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(18, 25, 37, .94), rgba(13, 18, 26, .94));
+  }
+
+  .score-card {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+  }
+
+  .score-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    font-size: .88rem;
+    font-weight: 900;
+  }
+
+  .score-icon.ok { background: var(--green-soft); color: var(--green); }
+  .score-icon.alert { background: var(--red-soft); color: var(--red); }
+  .score-icon.people { background: var(--blue-soft); color: var(--blue); }
+
+  .label {
+    color: var(--muted);
+    font-size: .72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .value {
+    margin-top: 3px;
+    color: var(--text);
+    font-size: 2.1rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .value.green { color: var(--green); }
+  .value.red { color: var(--red); }
+  .value.blue { color: var(--blue); }
+
+  .score-note {
+    justify-self: end;
+    align-self: start;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, .1);
+    color: var(--muted);
+    font-size: .7rem;
+    font-weight: 800;
+  }
+
+  .metric-card {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .metric-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .metric-head strong {
+    font-size: .86rem;
+  }
+
+  .metric-head span {
+    color: var(--muted);
+    font-size: .76rem;
+    font-weight: 800;
+  }
+
+  .bar-wrap {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, .16);
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: var(--green);
+    transition: width .45s ease, background .25s ease;
+  }
+
+  .compliance-score {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #compliance-pct {
+    color: var(--green);
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #compliance-text {
+    color: var(--muted);
+    font-size: .78rem;
+    font-weight: 750;
+    text-align: right;
+  }
+
+  .log-area {
+    display: grid;
+    gap: 8px;
+    max-height: 470px;
+    overflow: auto;
+  }
+
+  .activity-panel {
+    margin: 0 14px 14px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(7, 10, 15, .38);
+  }
+
+  .activity-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .activity-head strong {
+    font-size: .86rem;
+  }
+
+  .activity-head span {
+    color: var(--muted);
+    font-size: .74rem;
+    font-weight: 800;
+  }
+
+  .timeline {
+    display: grid;
+    gap: 8px;
+    max-height: 220px;
+    overflow: auto;
+  }
+
+  .log-entry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(18, 25, 37, .68);
+    color: var(--soft);
+    font-size: .82rem;
+  }
+
+  .log-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+
+  .log-dot.ok { background: var(--green); }
+  .log-dot.bad { background: var(--red); box-shadow: 0 0 0 5px rgba(255, 93, 100, .12); }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px clamp(18px, 3vw, 34px);
+    border-top: 1px solid var(--line);
+    background: rgba(7, 10, 15, .76);
+    color: var(--muted);
+    font-size: .76rem;
+  }
+
+  @media (max-width: 1120px) {
+    main { grid-template-columns: 1fr; }
+    aside { align-self: auto; }
+    .tab-panel.active.overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric-card.compliance { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 720px) {
+    .topbar {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .topbar-right {
+      width: 100%;
+      justify-content: space-between;
+      margin-left: 0;
+      flex-wrap: wrap;
+    }
+
+    main { padding: 14px; }
+    .workspace { grid-template-rows: auto minmax(280px, 58vh); }
+    .workspace-header { align-items: flex-start; flex-direction: column; }
+    .header-actions { justify-content: flex-start; }
+    .tabs { grid-template-columns: 1fr; }
+    .tab-panel.active.overview { grid-template-columns: 1fr; }
+    .score-card { grid-template-columns: 44px minmax(0, 1fr); }
+    .score-note { display: none; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">EPI</div>
+      <div>
+        <span class="logo">EPI Detect</span>
+        <span class="subtitle">Visão computacional para segurança operacional.</span>
+      </div>
+    </div>
+    <span class="mode-badge {% if mode == 'LIVE' %}badge-live{% else %}badge-demo{% endif %}">{{ mode }}</span>
+    <div class="topbar-right">
+      <span id="clock"></span>
+      <span class="chip"><span class="status-dot"></span>Monitoramento ativo.</span>
+    </div>
+  </header>
+
+  <div id="alert-bar">Atenção: pessoa sem EPI detectada na área monitorada.</div>
+
+  <main>
+    <section class="workspace" aria-label="Vídeo monitorado">
+      <div class="workspace-header">
+        <div>
+          <div class="eyebrow">Operação em tempo real.</div>
+          <h1>Câmera monitorada.</h1>
+          <p>Análise contínua de pessoas, coletes de segurança e conformidade da área.</p>
+        </div>
+        <div class="header-actions">
+          <span class="chip">Transmissão: <span id="fps-overlay">-- FPS</span></span>
+          <span class="chip">Modo: {{ mode }}.</span>
+        </div>
+      </div>
+
+      <div class="video-wrap">
+        <img id="stream" src="/video_feed" alt="Câmera monitorada">
+        <div class="video-hud">
+          <span class="hud-pill"><span class="status-dot"></span>Ao vivo.</span>
+          <span class="hud-pill">IA: YOLO.</span>
+          <button class="hud-button" type="button" id="fullscreen-button">Tela cheia.</button>
+        </div>
+        <div class="system-status" id="system-status">Inicializando câmera e modelo...</div>
+      </div>
+    </section>
+
+    <aside aria-label="Indicadores de segurança">
+      <div class="side-head">
+        <div class="side-title">
+          <strong>Painel de controle.</strong>
+          <span>Indicadores, desempenho e eventos.</span>
+        </div>
+      </div>
+
+      <nav class="tabs" aria-label="Abas do painel">
+        <button class="tab-button active" type="button" data-tab="overview">Visão geral</button>
+        <button class="tab-button" type="button" data-tab="performance">Desempenho</button>
+        <button class="tab-button" type="button" data-tab="events">Eventos</button>
+      </nav>
+
+      <section class="tab-panel overview active" id="tab-overview">
+        <article class="score-card">
+          <div class="score-icon ok">OK</div>
+          <div>
+            <div class="label">Com EPI.</div>
+            <div class="value green" id="val-ok">0</div>
+          </div>
+          <span class="score-note">Seguro.</span>
+        </article>
+
+        <article class="score-card">
+          <div class="score-icon alert">!</div>
+          <div>
+            <div class="label">Sem EPI.</div>
+            <div class="value red" id="val-bad">0</div>
+          </div>
+          <span class="score-note">Atenção.</span>
+        </article>
+
+        <article class="score-card">
+          <div class="score-icon people">#</div>
+          <div>
+            <div class="label">Total de pessoas.</div>
+            <div class="value blue" id="val-total">0</div>
+          </div>
+          <span class="score-note">Cena.</span>
+        </article>
+
+        <article class="metric-card compliance">
+          <div class="metric-head">
+            <strong>Taxa de conformidade.</strong>
+            <span id="compliance-text">Sem pessoas na cena.</span>
+          </div>
+          <div class="bar-wrap">
+            <div id="compliance-bar" class="bar-fill"></div>
+          </div>
+          <div class="compliance-score">
+            <div id="compliance-pct">--%</div>
+            <span>Meta recomendada: 80%.</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel" id="tab-performance">
+        <article class="metric-card">
+          <div class="metric-head">
+            <strong>Transmissão de vídeo.</strong>
+            <span id="fps-num">-- FPS</span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill" id="fps-bar"></div>
+          </div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-head">
+            <strong>Detecção YOLO.</strong>
+            <span id="det-num">-- FPS</span>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-fill" id="det-bar" style="background: var(--blue);"></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel" id="tab-events">
+        <div class="log-area" id="log-area">
+          <div class="log-entry">Aguardando detecções...</div>
+        </div>
+      </section>
+
+      <section class="activity-panel" aria-label="Últimas detecções">
+        <div class="activity-head">
+          <strong>Últimas detecções.</strong>
+          <span>Horário do evento.</span>
+        </div>
+        <div class="timeline" id="timeline-log-area">
+          <div class="log-entry">Nenhuma detecção registrada ainda.</div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer>
+    <span>EPI Detect - Monitoramento de colete de segurança.</span>
+    <span>Tempo ativo: <span id="uptime">00:00:00</span></span>
+  </footer>
+</div>
+
+<script>
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  setInterval(tick, 1000); tick();
+
+  const start = Date.now();
+  setInterval(() => {
+    const s = Math.floor((Date.now() - start) / 1000);
+    const h = String(Math.floor(s/3600)).padStart(2,'0');
+    const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const sec = String(s%60).padStart(2,'0');
+    document.getElementById('uptime').textContent = `${h}:${m}:${sec}`;
+  }, 1000);
+
+  document.querySelectorAll('.tab-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const tab = button.dataset.tab;
+      document.querySelectorAll('.tab-button').forEach((item) => item.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+    });
+  });
+
+  const videoWrap = document.querySelector('.video-wrap');
+  const fullscreenButton = document.getElementById('fullscreen-button');
+
+  fullscreenButton.addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await videoWrap.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch(e) {}
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    fullscreenButton.textContent = document.fullscreenElement ? 'Sair da tela cheia.' : 'Tela cheia.';
+  });
+
+  const MAX_FPS = 30;
+  const logArea = document.getElementById('log-area');
+  const timelineLogArea = document.getElementById('timeline-log-area');
+  let lastBad = 0;
+
+  function formatDetectionEvent(count) {
+    if (count === 0) return 'Todos com EPI.';
+    if (count === 1) return '1 pessoa sem EPI detectada.';
+    return `${count} pessoas sem EPI detectadas.`;
+  }
+
+  function appendLogEntry(container, time, ok, message, maxItems) {
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-dot ${ok?'ok':'bad'}"></span>
+      <span><strong>${time}</strong> - ${message}</span>`;
+    if (container.firstChild && (
+      container.firstChild.textContent.includes('Aguardando') ||
+      container.firstChild.textContent.includes('Nenhuma')
+    )) {
+      container.innerHTML = '';
+    }
+    container.prepend(entry);
+    if (container.children.length > maxItems) container.removeChild(container.lastChild);
+  }
+
+  async function fetchStats() {
+    try {
+      const r = await fetch('/stats');
+      const d = await r.json();
+
+      document.getElementById('val-ok').textContent = d.with_vest;
+      document.getElementById('val-bad').textContent = d.without_vest;
+      document.getElementById('val-total').textContent = d.total;
+
+      const fpsEl = document.getElementById('fps-bar');
+      const fpsNum = document.getElementById('fps-num');
+      const fpsPct = Math.min(d.fps / MAX_FPS * 100, 100);
+      fpsEl.style.width = fpsPct + '%';
+      fpsEl.style.background = d.fps >= 15 ? 'var(--green)' : d.fps >= 8 ? 'var(--yellow)' : 'var(--red)';
+      fpsNum.textContent = d.fps + ' FPS';
+      document.getElementById('fps-overlay').textContent = d.fps + ' FPS';
+
+      const statusEl = document.getElementById('system-status');
+      const statusText = {
+        starting: 'Inicializando sistema...',
+        waiting_camera: 'Aguardando câmera...',
+        loading_model: 'Câmera ativa. Carregando modelo de IA...',
+        running: '',
+        error: d.error || 'O pipeline encontrou um erro.'
+      };
+      if (d.status === 'running') {
+        statusEl.classList.add('hidden');
+        statusEl.classList.remove('error');
+      } else {
+        statusEl.textContent = statusText[d.status] || 'Preparando sistema...';
+        statusEl.classList.remove('hidden');
+        statusEl.classList.toggle('error', d.status === 'error');
+      }
+
+      const detEl = document.getElementById('det-bar');
+      const detNum = document.getElementById('det-num');
+      const detPct = Math.min((d.det_fps || 0) / 15 * 100, 100);
+      detEl.style.width = detPct + '%';
+      detNum.textContent = (d.det_fps || 0) + ' FPS';
+
+      const pct = d.total > 0 ? Math.round(d.with_vest / d.total * 100) : null;
+      const bar = document.getElementById('compliance-bar');
+      const lbl = document.getElementById('compliance-pct');
+      const text = document.getElementById('compliance-text');
+      if (pct !== null) {
+        bar.style.width = pct + '%';
+        bar.style.background = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+        lbl.style.color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+        lbl.textContent = pct + '%';
+        text.textContent = pct >= 80 ? 'Área em conformidade.' : pct >= 50 ? 'Atenção recomendada.' : 'Intervenção necessária.';
+      } else {
+        bar.style.width = '0%';
+        lbl.style.color = 'var(--muted)';
+        lbl.textContent = '--%';
+        text.textContent = 'Sem pessoas na cena.';
+      }
+
+      const alertBar = document.getElementById('alert-bar');
+      if (d.alert) alertBar.classList.add('show');
+      else alertBar.classList.remove('show');
+
+      if (d.without_vest !== lastBad && d.total > 0) {
+        lastBad = d.without_vest;
+        const time = new Date().toLocaleTimeString('pt-BR');
+        const ok = d.without_vest === 0;
+        const message = formatDetectionEvent(d.without_vest);
+        appendLogEntry(logArea, time, ok, message, 20);
+        appendLogEntry(timelineLogArea, time, ok, message, 5);
+      }
+    } catch(e) {}
+  }
+
+  setInterval(fetchStats, 500);
+  fetchStats();
+</script>
+</body>
+</html>
