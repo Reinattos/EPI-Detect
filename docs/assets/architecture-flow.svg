@@ -38,7 +38,7 @@
     <line x1="968" y1="362" x2="968" y2="422" stroke="#2DD47F" stroke-width="3"/>
 
     <rect x="420" y="422" width="760" height="112" rx="12" fill="#0D121A" stroke="#253044"/>
-    <text x="470" y="468" fill="#CBD5E1" font-size="18" font-weight="700">Estado compartilhado: detecções, FPS e alertas.</text>
-    <text x="470" y="500" fill="#CBD5E1" font-size="18" font-weight="700">Status da câmera e do modelo em tempo real.</text>
+    <text x="800" y="468" text-anchor="middle" fill="#CBD5E1" font-size="18" font-weight="700">Estado compartilhado: detecções, FPS e alertas.</text>
+    <text x="800" y="500" text-anchor="middle" fill="#CBD5E1" font-size="18" font-weight="700">Status da câmera e do modelo em tempo real.</text>
   </g>
 </svg>
