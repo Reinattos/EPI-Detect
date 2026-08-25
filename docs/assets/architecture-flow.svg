@@ -8,28 +8,28 @@
     </marker>
   </defs>
   <g font-family="Segoe UI, Arial">
-    <rect x="54" y="165" width="205" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <rect x="38" y="165" width="240" height="120" rx="10" fill="#101827" stroke="#253044"/>
     <text x="84" y="211" fill="#45C7FF" font-size="15" font-weight="850">01</text>
-    <text x="84" y="241" fill="#F8FAFC" font-size="20" font-weight="850">Câmera ou vídeo.</text>
+    <text x="84" y="241" fill="#F8FAFC" font-size="18" font-weight="850">Câmera ou vídeo.</text>
     <text x="84" y="267" fill="#94A3B8" font-size="14">Fonte de entrada.</text>
-    <line x1="259" y1="225" x2="352" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
-    <rect x="366" y="165" width="205" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <line x1="278" y1="225" x2="352" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="366" y="165" width="215" height="120" rx="10" fill="#101827" stroke="#253044"/>
     <text x="396" y="211" fill="#45C7FF" font-size="15" font-weight="850">02</text>
     <text x="396" y="241" fill="#F8FAFC" font-size="22" font-weight="850">Captura.</text>
     <text x="396" y="267" fill="#94A3B8" font-size="14">Frame mais recente.</text>
-    <line x1="571" y1="225" x2="664" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
-    <rect x="678" y="165" width="205" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <line x1="581" y1="225" x2="664" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="678" y="165" width="215" height="120" rx="10" fill="#101827" stroke="#253044"/>
     <text x="708" y="211" fill="#45C7FF" font-size="15" font-weight="850">03</text>
     <text x="708" y="241" fill="#F8FAFC" font-size="22" font-weight="850">YOLO + HSV.</text>
     <text x="708" y="267" fill="#94A3B8" font-size="14">Pessoa e colete.</text>
-    <line x1="883" y1="225" x2="976" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
-    <rect x="990" y="165" width="236" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <line x1="893" y1="225" x2="976" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="990" y="165" width="250" height="120" rx="10" fill="#101827" stroke="#253044"/>
     <text x="1020" y="211" fill="#45C7FF" font-size="15" font-weight="850">04</text>
     <text x="1020" y="241" fill="#F8FAFC" font-size="21" font-weight="850">Dashboard web.</text>
     <text x="1020" y="267" fill="#94A3B8" font-size="14">MJPEG, métricas e alertas.</text>
-    <rect x="326" y="332" width="620" height="86" rx="10" fill="#0D121A" stroke="#253044"/>
-    <text x="356" y="366" fill="#CBD5E1" font-size="15" font-weight="700">Estado compartilhado: detecções, FPS e alertas.</text>
-    <text x="356" y="392" fill="#CBD5E1" font-size="15" font-weight="700">Status da câmera e do modelo em tempo real.</text>
+    <rect x="260" y="328" width="760" height="92" rx="10" fill="#0D121A" stroke="#253044"/>
+    <text x="300" y="364" fill="#CBD5E1" font-size="14" font-weight="700">Estado compartilhado: detecções, FPS e alertas.</text>
+    <text x="300" y="390" fill="#CBD5E1" font-size="14" font-weight="700">Status da câmera e do modelo em tempo real.</text>
     <line x1="469" y1="285" x2="469" y2="338" stroke="#2DD47F" stroke-width="2"/>
     <line x1="781" y1="285" x2="781" y2="338" stroke="#2DD47F" stroke-width="2"/>
   </g>
