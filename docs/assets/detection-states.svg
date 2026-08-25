@@ -1,0 +1,27 @@
+<svg width="1280" height="520" viewBox="0 0 1280 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="520" fill="#070A0F"/>
+  <text x="54" y="68" fill="#F8FAFC" font-family="Segoe UI, Arial" font-size="30" font-weight="850">Estados exibidos no painel.</text>
+  <text x="54" y="98" fill="#94A3B8" font-family="Segoe UI, Arial" font-size="16">O sistema prioriza leitura rápida para operação, auditoria visual e acompanhamento de eventos.</text>
+  <g font-family="Segoe UI, Arial">
+    <rect x="54" y="155" width="360" height="250" rx="12" fill="#101827" stroke="#253044"/>
+    <rect x="84" y="190" width="62" height="62" rx="10" fill="#102B20"/>
+    <text x="102" y="228" fill="#2DD47F" font-size="18" font-weight="900">OK</text>
+    <text x="84" y="292" fill="#F8FAFC" font-size="25" font-weight="850">Com EPI.</text>
+    <text x="84" y="324" fill="#94A3B8" font-size="15">Pessoa em conformidade com o uso do colete.</text>
+    <text x="84" y="366" fill="#2DD47F" font-size="46" font-weight="900">Seguro.</text>
+    <rect x="460" y="155" width="360" height="250" rx="12" fill="#101827" stroke="#253044"/>
+    <rect x="490" y="190" width="62" height="62" rx="10" fill="#331A22"/>
+    <text x="514" y="231" fill="#FF5D64" font-size="26" font-weight="900">!</text>
+    <text x="490" y="292" fill="#F8FAFC" font-size="25" font-weight="850">Sem EPI.</text>
+    <text x="490" y="324" fill="#94A3B8" font-size="15">Pessoa detectada sem o colete de segurança.</text>
+    <text x="490" y="366" fill="#FF5D64" font-size="46" font-weight="900">Atenção.</text>
+    <rect x="866" y="155" width="360" height="250" rx="12" fill="#101827" stroke="#253044"/>
+    <rect x="896" y="190" width="62" height="62" rx="10" fill="#10283A"/>
+    <text x="918" y="231" fill="#45C7FF" font-size="24" font-weight="900">%</text>
+    <text x="896" y="292" fill="#F8FAFC" font-size="25" font-weight="850">Conformidade.</text>
+    <text x="896" y="324" fill="#94A3B8" font-size="15">Percentual de pessoas usando EPI corretamente.</text>
+    <rect x="896" y="354" width="260" height="12" rx="6" fill="#263246"/>
+    <rect x="896" y="354" width="208" height="12" rx="6" fill="#2DD47F"/>
+    <text x="896" y="405" fill="#2DD47F" font-size="46" font-weight="900">80%.</text>
+  </g>
+</svg>

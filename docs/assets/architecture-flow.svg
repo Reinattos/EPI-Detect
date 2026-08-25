@@ -1,0 +1,35 @@
+<svg width="1280" height="480" viewBox="0 0 1280 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="480" fill="#070A0F"/>
+  <text x="54" y="68" fill="#F8FAFC" font-family="Segoe UI, Arial" font-size="30" font-weight="850">Arquitetura do pipeline.</text>
+  <text x="54" y="98" fill="#94A3B8" font-family="Segoe UI, Arial" font-size="16">Captura, inferência e transmissão trabalham de forma independente para manter o painel fluido.</text>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2L10 6L2 10V2Z" fill="#45C7FF"/>
+    </marker>
+  </defs>
+  <g font-family="Segoe UI, Arial">
+    <rect x="54" y="165" width="205" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <text x="84" y="211" fill="#45C7FF" font-size="15" font-weight="850">01</text>
+    <text x="84" y="241" fill="#F8FAFC" font-size="22" font-weight="850">Câmera ou vídeo.</text>
+    <text x="84" y="267" fill="#94A3B8" font-size="14">Fonte de entrada.</text>
+    <line x1="259" y1="225" x2="352" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="366" y="165" width="205" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <text x="396" y="211" fill="#45C7FF" font-size="15" font-weight="850">02</text>
+    <text x="396" y="241" fill="#F8FAFC" font-size="22" font-weight="850">Captura.</text>
+    <text x="396" y="267" fill="#94A3B8" font-size="14">Frame mais recente.</text>
+    <line x1="571" y1="225" x2="664" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="678" y="165" width="205" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <text x="708" y="211" fill="#45C7FF" font-size="15" font-weight="850">03</text>
+    <text x="708" y="241" fill="#F8FAFC" font-size="22" font-weight="850">YOLO + HSV.</text>
+    <text x="708" y="267" fill="#94A3B8" font-size="14">Pessoa e colete.</text>
+    <line x1="883" y1="225" x2="976" y2="225" stroke="#45C7FF" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="990" y="165" width="236" height="120" rx="10" fill="#101827" stroke="#253044"/>
+    <text x="1020" y="211" fill="#45C7FF" font-size="15" font-weight="850">04</text>
+    <text x="1020" y="241" fill="#F8FAFC" font-size="22" font-weight="850">Dashboard web.</text>
+    <text x="1020" y="267" fill="#94A3B8" font-size="14">MJPEG, métricas e alertas.</text>
+    <rect x="366" y="338" width="517" height="70" rx="10" fill="#0D121A" stroke="#253044"/>
+    <text x="396" y="382" fill="#CBD5E1" font-size="16" font-weight="700">Estado compartilhado: detecções, FPS, alertas, status da câmera e do modelo.</text>
+    <line x1="469" y1="285" x2="469" y2="338" stroke="#2DD47F" stroke-width="2"/>
+    <line x1="781" y1="285" x2="781" y2="338" stroke="#2DD47F" stroke-width="2"/>
+  </g>
+</svg>
