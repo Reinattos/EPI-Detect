@@ -21,7 +21,7 @@ O objetivo do projeto é demonstrar como visão computacional pode apoiar rotina
 - Pipeline assíncrono para manter captura, inferência e transmissão mais fluidas.
 - Dashboard web moderno com métricas, alertas, abas e opção de tela cheia.
 - Log de eventos com horário da detecção.
-- API local para integração com outros front-ends ou ferramentas internas.
+- API local para integração com outras interfaces ou ferramentas internas.
 
 ## Dashboard
 
@@ -49,17 +49,17 @@ Fluxo simplificado:
 1. A câmera ou o vídeo fornece os frames de entrada.
 2. A camada de captura mantém o frame mais recente disponível.
 3. O detector executa YOLO Pose e aplica as regras de classificação do colete.
-4. O renderizador desenha as marcações e gera o stream para o dashboard.
+4. O renderizador desenha as marcações e gera a transmissão para o dashboard.
 5. O Flask publica o vídeo, os indicadores e o status do sistema.
 
 ## Tecnologias Utilizadas
 
 - **Python:** linguagem principal do projeto.
 - **Flask:** servidor local e rotas da API.
-- **OpenCV:** captura de vídeo, leitura de frames e codificação do stream.
+- **OpenCV:** captura de vídeo, leitura de frames e codificação da transmissão.
 - **Ultralytics YOLO:** detecção de pessoas e keypoints.
 - **NumPy:** processamento numérico.
-- **HTML, CSS e JavaScript:** dashboard web.
+- **HTML, CSS e JavaScript:** interface web do dashboard.
 
 ## Requisitos
 
@@ -148,7 +148,7 @@ python detect.py --source demo --save resultado.mp4
 
 ### `GET /video_feed`
 
-Retorna o stream MJPEG usado pelo dashboard.
+Retorna a transmissão MJPEG usada pelo dashboard.
 
 ```html
 <img src="/video_feed" alt="Câmera monitorada">
@@ -218,7 +218,7 @@ EPI-Detect/
 - A classificação de colete ainda depende de regras de cor, o que pode variar conforme iluminação, câmera, distância e tipo de EPI.
 - Ambientes com baixa luz, reflexos ou obstruções podem gerar falsos positivos ou falsos negativos.
 - Para uso produtivo, recomenda-se treinar ou validar um modelo específico com dados do ambiente real.
-- O dashboard foi projetado para execução local. Para rede corporativa, revise autenticação, logs, retenção de imagens e infraestrutura.
+- O dashboard foi projetado para execução local. Para uso em rede corporativa, revise autenticação, logs, retenção de imagens e infraestrutura.
 
 ## Testes
 
@@ -249,4 +249,3 @@ Depois, execute o dashboard e confirme:
 ## Licença
 
 Este projeto está licenciado sob a licença MIT. Consulte [LICENSE](LICENSE) para mais detalhes.
-
