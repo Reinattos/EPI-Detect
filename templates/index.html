@@ -183,7 +183,7 @@
 
   main {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 390px);
+    grid-template-columns: minmax(0, 1fr) minmax(390px, 450px);
     gap: 18px;
     min-height: 0;
     padding: 18px clamp(18px, 3vw, 34px);
@@ -410,12 +410,12 @@
 
   .tab-panel {
     display: none;
-    padding: 14px;
+    padding: 18px;
   }
 
   .tab-panel.active {
     display: grid;
-    gap: 12px;
+    gap: 16px;
   }
 
   .score-card,
@@ -428,19 +428,21 @@
 
   .score-card {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) auto;
-    gap: 12px;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 16px;
     align-items: center;
-    padding: 14px;
+    min-height: 104px;
+    padding: 18px;
+    overflow: hidden;
   }
 
   .score-icon {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: var(--radius);
     display: grid;
     place-items: center;
-    font-size: .88rem;
+    font-size: .92rem;
     font-weight: 900;
   }
 
@@ -450,17 +452,21 @@
 
   .label {
     color: var(--muted);
-    font-size: .72rem;
+    font-size: .76rem;
     font-weight: 850;
     text-transform: uppercase;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
   }
 
   .value {
-    margin-top: 3px;
+    margin-top: 6px;
     color: var(--text);
-    font-size: 2.1rem;
+    font-size: clamp(2rem, 4vw, 2.65rem);
     font-weight: 900;
-    line-height: 1;
+    line-height: 1.08;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   .value.green { color: var(--green); }
@@ -476,29 +482,42 @@
     color: var(--muted);
     font-size: .7rem;
     font-weight: 800;
+    max-width: 100%;
+    white-space: nowrap;
   }
 
   .metric-card {
     display: grid;
-    gap: 12px;
-    padding: 14px;
+    gap: 16px;
+    min-height: 116px;
+    padding: 18px;
+    overflow: hidden;
+  }
+
+  .metric-card.compliance {
+    min-height: 170px;
   }
 
   .metric-head {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    align-items: center;
+    align-items: flex-start;
+    min-width: 0;
   }
 
   .metric-head strong {
-    font-size: .86rem;
+    font-size: .92rem;
+    line-height: 1.35;
   }
 
   .metric-head span {
     color: var(--muted);
-    font-size: .76rem;
+    font-size: .78rem;
     font-weight: 800;
+    line-height: 1.4;
+    max-width: 48%;
+    overflow-wrap: anywhere;
   }
 
   .bar-wrap {
@@ -518,17 +537,19 @@
 
   .compliance-score {
     display: flex;
-    align-items: baseline;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 12px;
+    min-width: 0;
   }
 
   #compliance-pct {
     color: var(--green);
-    font-size: 2.4rem;
+    font-size: clamp(2.15rem, 5vw, 3rem);
     font-weight: 900;
-    line-height: 1;
+    line-height: 1.08;
     font-variant-numeric: tabular-nums;
+    padding-bottom: 2px;
   }
 
   #compliance-text {
@@ -639,8 +660,22 @@
     .header-actions { justify-content: flex-start; }
     .tabs { grid-template-columns: 1fr; }
     .tab-panel.active.overview { grid-template-columns: 1fr; }
-    .score-card { grid-template-columns: 44px minmax(0, 1fr); }
+    .score-card {
+      grid-template-columns: 52px minmax(0, 1fr);
+      min-height: 104px;
+      padding: 16px;
+    }
     .score-note { display: none; }
+    .metric-head,
+    .compliance-score {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .metric-head span,
+    #compliance-text {
+      max-width: 100%;
+      text-align: left;
+    }
     footer { flex-direction: column; align-items: flex-start; }
   }
 </style>
