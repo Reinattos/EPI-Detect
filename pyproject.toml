@@ -1,15 +1,27 @@
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-q"
+[project]
+name = "epi-detect"
+version = "2.0.0"
+description = "Deteccao de EPI (colete refletivo e capacete) em video com YOLOv8-pose"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "AGPL-3.0-or-later" }
+dependencies = [
+    "ultralytics>=8.3.0",
+    "opencv-python>=4.10.0",
+    "numpy>=1.26.0",
+    "Flask>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0", "ruff>=0.6.0"]
 
 [tool.ruff]
-target-version = "py310"
 line-length = 100
-exclude = ["dataset_epi", "runs"]
+target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP"]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 ignore = ["E501"]
 
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]

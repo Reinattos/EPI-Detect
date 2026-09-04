@@ -1,15 +1,22 @@
-# Seguranca
+# Política de segurança
 
-## Escopo
+## Reportando uma vulnerabilidade
 
-Relate de forma privada vulnerabilidades que possam expor cameras, arquivos locais, dados pessoais, credenciais ou permitir acesso nao autorizado ao servidor.
+Abra uma issue descrevendo o problema. Para algo sensível, use o canal
+privado de security advisory do GitHub em vez de uma issue pública.
 
-## Como relatar
+## Considerações de privacidade
 
-Quando o repositorio estiver no GitHub, habilite **Private vulnerability reporting** na aba Security e use esse canal. Nao publique detalhes exploraveis em uma issue aberta.
+Este projeto processa imagem de pessoas. Alguns pontos importam:
 
-Inclua versao, ambiente, passos de reproducao, impacto e uma sugestao de correcao quando possivel. Nao inclua imagens pessoais ou credenciais reais.
-
-## Observacao de implantacao
-
-O servidor Flask atual e voltado a desenvolvimento local. Ele nao inclui autenticacao, HTTPS ou endurecimento para exposicao direta na internet.
+- **Nada é gravado por padrão.** `detect.py` e `server.py` processam em
+  memória e não persistem quadros nem resultados.
+- **Não há identificação de pessoas.** Não existe reconhecimento facial.
+  O identificador de rastreamento é um número temporário, válido apenas
+  enquanto a pessoa está no quadro, e não é vinculado a nenhum cadastro.
+- **Credenciais de câmera.** URLs RTSP costumam conter usuário e senha.
+  Mantenha-as em `settings_local.json` ou em variável de ambiente, nunca
+  no código. `settings_local.json` está no `.gitignore`.
+- **Monitoramento de trabalhadores** é regulado em várias jurisdições. No
+  Brasil, aplica-se a LGPD. Antes de usar em produção, verifique base
+  legal, transparência com as pessoas monitoradas e política de retenção.

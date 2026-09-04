@@ -5,829 +5,657 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EPI Detect</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #070a0f;
-    --surface: #0d121a;
-    --surface-raised: #121925;
-    --surface-soft: rgba(18, 25, 37, .72);
-    --line: rgba(148, 163, 184, .14);
-    --line-strong: rgba(148, 163, 184, .24);
-    --text: #f8fafc;
-    --soft: #cbd5e1;
-    --muted: #94a3b8;
-    --muted-2: #64748b;
-    --green: #2dd47f;
-    --green-soft: rgba(45, 212, 127, .13);
-    --red: #ff5d64;
-    --red-soft: rgba(255, 93, 100, .13);
-    --yellow: #ffd43b;
-    --yellow-soft: rgba(255, 212, 59, .14);
-    --blue: #45c7ff;
-    --blue-soft: rgba(69, 199, 255, .13);
-    --shadow: 0 24px 70px rgba(0, 0, 0, .36);
-    --radius: 8px;
+    --bg:       #0a0a0a;
+    --surface:  #111111;
+    --border:   #1e1e1e;
+    --green:    #22c55e;
+    --red:      #ef4444;
+    --yellow:   #facc15;
+    --blue:     #3b82f6;
+    --purple:   #a855f7;
+    --text:     #e5e5e5;
+    --muted:    #6b7280;
+    --radius:   10px;
   }
-
-  html { min-height: 100%; }
 
   body {
-    margin: 0;
-    min-height: 100vh;
+    background: var(--bg);
     color: var(--text);
-    background:
-      radial-gradient(circle at 12% 8%, rgba(69, 199, 255, .14), transparent 27rem),
-      radial-gradient(circle at 88% 22%, rgba(45, 212, 127, .08), transparent 24rem),
-      linear-gradient(145deg, #070a0f 0%, #0a1018 52%, #070a0f 100%);
-    font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    letter-spacing: 0;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
-    background-size: 52px 52px;
-    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .45), transparent 74%);
-  }
-
-  .app-shell {
-    position: relative;
-    z-index: 1;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    display: flex;
+    flex-direction: column;
   }
 
-  .topbar {
+  /* ── header ── */
+  header {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 16px clamp(18px, 3vw, 34px);
-    border-bottom: 1px solid var(--line);
-    background: rgba(7, 10, 15, .82);
-    backdrop-filter: blur(18px);
+    gap: 14px;
+    padding: 14px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
   }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-  }
-
-  .brand-mark {
-    width: 42px;
-    height: 42px;
-    border: 1px solid rgba(45, 212, 127, .42);
-    border-radius: var(--radius);
-    display: grid;
-    place-items: center;
-    color: var(--green);
-    background: linear-gradient(145deg, rgba(45, 212, 127, .18), rgba(69, 199, 255, .08));
-    font-size: 1rem;
-    font-weight: 900;
-  }
-
-  .logo {
-    display: block;
-    font-size: 1.08rem;
-    font-weight: 850;
-    line-height: 1.1;
-  }
-
-  .subtitle {
-    display: block;
-    margin-top: 4px;
-    color: var(--muted);
-    font-size: .8rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .mode-badge,
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 34px;
-    padding: 8px 11px;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: rgba(15, 23, 42, .7);
-    color: var(--soft);
-    font-size: .76rem;
-    font-weight: 800;
-    white-space: nowrap;
-  }
-
-  .mode-badge {
+  .logo { font-size: 1.25rem; font-weight: 700; letter-spacing: .04em; color: #fff; }
+  .badge {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .08em;
     text-transform: uppercase;
   }
-
-  .mode-badge::before,
-  .status-dot {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--blue);
-    box-shadow: 0 0 0 5px rgba(69, 199, 255, .12);
+  .badge-demo { background: #4f1d96; color: #e9d5ff; }
+  .badge-live { background: #7c3aed; color: #f5f3ff; animation: pulse-purple 2s infinite; }
+  @keyframes pulse-purple {
+    0%,100% { opacity: 1; } 50% { opacity: .65; }
   }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  #clock { font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .project-tag { font-size: .72rem; color: var(--muted); letter-spacing: .06em; }
 
-  .badge-live::before {
-    background: var(--green);
-    box-shadow: 0 0 0 5px rgba(45, 212, 127, .12);
-    animation: status-pulse 1.8s ease-in-out infinite;
-  }
-
-  @keyframes status-pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(.72); opacity: .58; }
-  }
-
-  .topbar-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--muted);
-    font-size: .82rem;
-  }
-
-  #clock,
-  #uptime,
-  .value,
-  .tab-count {
-    font-variant-numeric: tabular-nums;
-  }
-
+  /* ── alert banner ── */
   #alert-bar {
     display: none;
-    padding: 12px clamp(18px, 3vw, 34px);
-    border-bottom: 1px solid rgba(255, 93, 100, .32);
-    color: #fff1f2;
-    background: linear-gradient(90deg, rgba(159, 18, 57, .96), rgba(185, 28, 28, .82));
-    font-size: .9rem;
-    font-weight: 850;
+    background: #450a0a;
+    border-bottom: 1px solid #7f1d1d;
+    color: #fca5a5;
+    font-size: .85rem;
+    font-weight: 600;
     text-align: center;
+    padding: 8px;
+    letter-spacing: .04em;
+    animation: blink-bg 1s infinite;
   }
-
   #alert-bar.show { display: block; }
+  @keyframes blink-bg {
+    0%,100% { background: #450a0a; } 50% { background: #7f1d1d; }
+  }
 
+  /* ── main layout ── */
   main {
+    flex: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(390px, 450px);
-    gap: 18px;
-    min-height: 0;
-    padding: 18px clamp(18px, 3vw, 34px);
-  }
-
-  .workspace {
-    min-width: 0;
-    display: grid;
-    grid-template-rows: auto minmax(380px, 1fr);
-    gap: 12px;
-  }
-
-  .workspace-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 16px;
-  }
-
-  .eyebrow {
-    margin-bottom: 5px;
-    color: var(--blue);
-    font-size: .72rem;
-    font-weight: 850;
-    text-transform: uppercase;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(1.4rem, 2.2vw, 2rem);
-    line-height: 1.08;
-  }
-
-  .workspace-header p {
-    margin: 7px 0 0;
-    max-width: 680px;
-    color: var(--muted);
-    font-size: .92rem;
-    line-height: 1.5;
-  }
-
-  .header-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .video-wrap {
-    position: relative;
-    min-height: 380px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background: #020617;
+    grid-template-columns: 1fr 280px;
+    gap: 0;
     overflow: hidden;
-    box-shadow: var(--shadow);
   }
 
-  .video-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border: 1px solid rgba(255, 255, 255, .06);
+  /* ── video ── */
+  .video-wrap {
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
   }
-
   #stream {
     width: 100%;
     height: 100%;
-    min-height: inherit;
     object-fit: contain;
     display: block;
-    background: #020617;
   }
-
-  .video-hud {
+  .video-overlay {
     position: absolute;
-    left: 14px;
-    top: 14px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    max-width: calc(100% - 28px);
-  }
-
-  .hud-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 34px;
-    padding: 8px 10px;
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 999px;
-    background: rgba(2, 6, 23, .72);
-    color: var(--soft);
-    font-size: .78rem;
-    font-weight: 800;
-    backdrop-filter: blur(12px);
-  }
-
-  .hud-button {
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 999px;
-    min-height: 34px;
-    padding: 8px 11px;
-    background: rgba(2, 6, 23, .72);
-    color: var(--soft);
-    cursor: pointer;
-    font: inherit;
-    font-size: .78rem;
-    font-weight: 850;
-    backdrop-filter: blur(12px);
-    transition: background .2s ease, border-color .2s ease, color .2s ease;
-  }
-
-  .hud-button:hover {
-    border-color: rgba(69, 199, 255, .38);
-    background: rgba(69, 199, 255, .14);
-    color: var(--text);
-  }
-
-  .video-wrap:fullscreen {
-    border-radius: 0;
-    border: 0;
-    background: #000;
-  }
-
-  .video-wrap:fullscreen #stream {
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain;
-  }
-
-  .system-status {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: min(460px, calc(100% - 32px));
-    padding: 18px 20px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background: rgba(15, 23, 42, .92);
-    color: var(--soft);
-    font-size: .92rem;
-    text-align: center;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(14px);
-  }
-
-  .system-status.error {
-    border-color: rgba(255, 93, 100, .72);
-    color: #fecdd3;
-    background: rgba(76, 5, 25, .92);
-  }
-
-  .system-status.hidden { display: none; }
-
-  aside {
-    min-width: 0;
-    align-self: stretch;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: rgba(13, 18, 26, .86);
-    box-shadow: 0 16px 44px rgba(0, 0, 0, .22);
-    overflow: hidden;
-  }
-
-  .side-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .side-title {
-    display: grid;
-    gap: 2px;
-  }
-
-  .side-title strong {
-    font-size: .94rem;
-  }
-
-  .side-title span {
+    top: 12px; left: 12px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: .72rem;
     color: var(--muted);
-    font-size: .78rem;
-  }
-
-  .tabs {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    padding: 10px;
-    border-bottom: 1px solid var(--line);
-    background: rgba(7, 10, 15, .36);
-  }
-
-  .tab-button {
-    min-height: 38px;
-    border: 1px solid transparent;
-    border-radius: var(--radius);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font: inherit;
-    font-size: .78rem;
-    font-weight: 850;
-    transition: background .2s ease, border-color .2s ease, color .2s ease;
-  }
-
-  .tab-button:hover {
-    color: var(--soft);
-    background: rgba(148, 163, 184, .08);
-  }
-
-  .tab-button.active {
-    border-color: rgba(69, 199, 255, .32);
-    color: var(--text);
-    background: rgba(69, 199, 255, .12);
-  }
-
-  .tab-panel {
-    display: none;
-    padding: 18px;
-  }
-
-  .tab-panel.active {
-    display: grid;
-    gap: 16px;
-  }
-
-  .score-card,
-  .metric-card,
-  .event-card {
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: linear-gradient(180deg, rgba(18, 25, 37, .94), rgba(13, 18, 26, .94));
-  }
-
-  .score-card {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr) auto;
-    gap: 16px;
-    align-items: center;
-    min-height: 104px;
-    padding: 18px;
-    overflow: hidden;
-  }
-
-  .score-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--radius);
-    display: grid;
-    place-items: center;
-    font-size: .92rem;
-    font-weight: 900;
-  }
-
-  .score-icon.ok { background: var(--green-soft); color: var(--green); }
-  .score-icon.alert { background: var(--red-soft); color: var(--red); }
-  .score-icon.people { background: var(--blue-soft); color: var(--blue); }
-
-  .label {
-    color: var(--muted);
-    font-size: .76rem;
-    font-weight: 850;
-    text-transform: uppercase;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
-  }
-
-  .value {
-    margin-top: 6px;
-    color: var(--text);
-    font-size: clamp(2rem, 4vw, 2.65rem);
-    font-weight: 900;
-    line-height: 1.08;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-  }
-
-  .value.green { color: var(--green); }
-  .value.red { color: var(--red); }
-  .value.blue { color: var(--blue); }
-
-  .score-note {
-    justify-self: end;
-    align-self: start;
-    padding: 5px 8px;
-    border-radius: 999px;
-    background: rgba(148, 163, 184, .1);
-    color: var(--muted);
-    font-size: .7rem;
-    font-weight: 800;
-    max-width: 100%;
-    white-space: nowrap;
-  }
-
-  .metric-card {
-    display: grid;
-    gap: 16px;
-    min-height: 116px;
-    padding: 18px;
-    overflow: hidden;
-  }
-
-  .metric-card.compliance {
-    min-height: 170px;
-  }
-
-  .metric-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: flex-start;
-    min-width: 0;
-  }
-
-  .metric-head strong {
-    font-size: .92rem;
-    line-height: 1.35;
-  }
-
-  .metric-head span {
-    color: var(--muted);
-    font-size: .78rem;
-    font-weight: 800;
-    line-height: 1.4;
-    max-width: 48%;
-    overflow-wrap: anywhere;
-  }
-
-  .bar-wrap {
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(148, 163, 184, .16);
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    width: 0%;
-    border-radius: inherit;
-    background: var(--green);
-    transition: width .45s ease, background .25s ease;
-  }
-
-  .compliance-score {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-    min-width: 0;
-  }
-
-  #compliance-pct {
-    color: var(--green);
-    font-size: clamp(2.15rem, 5vw, 3rem);
-    font-weight: 900;
-    line-height: 1.08;
     font-variant-numeric: tabular-nums;
-    padding-bottom: 2px;
   }
 
-  #compliance-text {
-    color: var(--muted);
-    font-size: .78rem;
-    font-weight: 750;
-    text-align: right;
+  /* botão fullscreen */
+  #btn-fs {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1.1rem;
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .2s;
+    z-index: 10;
   }
+  #btn-fs:hover { background: rgba(255,255,255,.15); }
 
-  .log-area {
-    display: grid;
-    gap: 8px;
-    max-height: 470px;
-    overflow: auto;
+  /* botão configurações */
+  #btn-cfg {
+    position: absolute;
+    top: 10px; right: 52px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 6px 9px;
+    z-index: 10;
+    transition: background .15s;
   }
+  #btn-cfg:hover  { background: rgba(255,255,255,.15); }
 
-  .activity-panel {
-    margin: 0 14px 14px;
-    padding: 14px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: rgba(7, 10, 15, .38);
+  #btn-zone {
+    position: absolute;
+    top: 10px; right: 94px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 6px; color: #fff;
+    cursor: pointer; font-size: 1.1rem; line-height: 1;
+    padding: 6px 9px; z-index: 10; transition: background .15s;
   }
+  #btn-zone:hover { background: rgba(99,102,241,.5); }
 
-  .activity-head {
-    display: flex;
-    justify-content: space-between;
+  /* modal configurações */
+  #cfg-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 1000;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+  }
+  #cfg-modal.open { display: flex; }
+  #cfg-box {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 28px 32px 24px;
+    width: min(540px, 96vw);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  /* zone modal */
+  #zone-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.75); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  #zone-modal.open { display: flex; }
+  #zone-box {
+    background: #1e293b; border: 1px solid #334155; border-radius: 12px;
+    padding: 24px 28px 20px; width: min(780px, 96vw);
+    max-height: 92vh; overflow-y: auto;
+  }
+  #zone-box h2 { margin: 0 0 4px; font-size: 1.1rem; color: #f1f5f9; }
+  .zone-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 6px; border-radius: 5px; margin-bottom: 4px;
+    background: #0f172a; font-size: .75rem;
+  }
+  .zone-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .zone-name { flex: 1; color: #cbd5e1; }
+  .zone-del  { cursor: pointer; color: #64748b; border: none; background: none;
+               font-size: .9rem; padding: 0 2px; }
+  .zone-del:hover { color: #f87171; }
+
+  #cfg-box h2 { margin: 0 0 4px; font-size: 1.1rem; color: #f1f5f9; }
+  #cfg-box .cfg-sub { font-size: .75rem; color: #64748b; margin-bottom: 20px; }
+  .cfg-section { font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+                 color: #64748b; text-transform: uppercase; margin: 18px 0 8px; }
+  .cfg-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cfg-row label { flex: 0 0 160px; font-size: .8rem; color: #94a3b8; }
+  .cfg-row input[type=text], .cfg-row input[type=number], .cfg-row select {
+    flex: 1; background: #0f172a; border: 1px solid #334155; border-radius: 6px;
+    color: #f1f5f9; font-size: .82rem; padding: 5px 8px;
+  }
+  .cfg-row input[type=range] { flex: 1; accent-color: #facc15; }
+  .cfg-row .cfg-val { min-width: 38px; font-size: .8rem; color: #facc15; text-align: right; }
+  .cfg-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #facc15; }
+  #cfg-msg { font-size: .78rem; min-height: 18px; margin: 12px 0 0; color: #4ade80; }
+  #cfg-msg.warn { color: #fbbf24; }
+  .cfg-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .cfg-actions button {
+    flex: 1; border: none; border-radius: 7px; cursor: pointer;
+    font-size: .82rem; font-weight: 600; padding: 9px;
+  }
+  #cfg-save  { background: #facc15; color: #000; }
+  #cfg-reset { background: #334155; color: #94a3b8; }
+  #cfg-close { background: #1e293b; border: 1px solid #334155 !important; color: #64748b; }
+  .hw-badge {
+    background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+    padding: 10px 12px; font-size: .75rem; color: #64748b; margin-bottom: 4px;
+  }
+  .hw-badge strong { color: #94a3b8; }
+  .hw-profile {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: .7rem; font-weight: 700; text-transform: uppercase; margin-left: 6px;
+  }
+  .hw-profile.low    { background: rgba(239,68,68,.15);  color: #f87171; }
+  .hw-profile.medium { background: rgba(250,204,21,.15); color: #facc15; }
+  .hw-profile.high   { background: rgba(74,222,128,.15); color: #4ade80; }
+
+  /* fullscreen — vídeo ocupa tela toda, sidebar some */
+  .video-wrap:fullscreen,
+  .video-wrap:-webkit-full-screen {
+    background: #000;
+    width: 100vw; height: 100vh;
+  }
+  .video-wrap:fullscreen #stream,
+  .video-wrap:-webkit-full-screen #stream {
+    object-fit: cover;
+    width: 100%; height: 100%;
+  }
+
+  /* banner informativo fullscreen */
+  #fs-banner {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,.85));
+    padding: 48px 32px 24px;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  #fs-banner.visible { display: block; }
+
+  #fs-banner .fs-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .05em;
+    margin-bottom: 6px;
+  }
+  #fs-banner .fs-sub {
+    font-size: .85rem;
+    color: #cbd5e1;
+    line-height: 1.55;
+    max-width: 640px;
+  }
+  #fs-banner .fs-badge {
+    display: inline-block;
+    background: rgba(250,204,21,.15);
+    border: 1px solid rgba(250,204,21,.35);
+    color: #facc15;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
     margin-bottom: 10px;
   }
-
-  .activity-head strong {
-    font-size: .86rem;
+  .system-status {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: min(440px, 80%);
+    padding: 12px 18px;
+    border-radius: 8px;
+    background: rgba(17,17,17,.9);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: .85rem;
+    text-align: center;
   }
+  .system-status.error { border-color: var(--red); color: #fca5a5; }
+  .system-status.hidden { display: none; }
 
-  .activity-head span {
+  /* ── sidebar ── */
+  aside {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+  }
+  .section-title {
+    padding: 16px 20px 8px;
+    font-size: .68rem;
+    font-weight: 700;
     color: var(--muted);
-    font-size: .74rem;
-    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
   }
 
-  .timeline {
-    display: grid;
-    gap: 8px;
-    max-height: 220px;
-    overflow: auto;
-  }
-
-  .log-entry {
+  /* stat cards */
+  .stats-grid { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
+  .stat-card {
+    background: var(--surface);
+    padding: 18px 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-height: 42px;
-    padding: 11px 12px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: rgba(18, 25, 37, .68);
-    color: var(--soft);
-    font-size: .82rem;
+    gap: 14px;
   }
-
-  .log-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    flex: 0 0 auto;
+  .stat-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
   }
+  .stat-icon.green  { background: rgba(34,197,94,.15);  color: var(--green); }
+  .stat-icon.red    { background: rgba(239,68,68,.15);   color: var(--red); }
+  .stat-icon.blue   { background: rgba(59,130,246,.15);  color: var(--blue); }
+  .stat-icon.yellow { background: rgba(250,204,21,.15);  color: var(--yellow); }
+  .stat-label { font-size: .72rem; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
+  .stat-value { font-size: 1.9rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+  .stat-value.green  { color: var(--green); }
+  .stat-value.red    { color: var(--red); }
+  .stat-value.blue   { color: var(--blue); }
+  .stat-value.yellow { color: var(--yellow); }
 
-  .log-dot.ok { background: var(--green); }
-  .log-dot.bad { background: var(--red); box-shadow: 0 0 0 5px rgba(255, 93, 100, .12); }
+  /* history log */
+  .log-area { flex: 1; padding: 12px 16px; }
+  .log-entry {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .75rem;
+    color: var(--muted);
+  }
+  .log-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .log-dot.ok  { background: var(--green); }
+  .log-dot.bad { background: var(--red); }
 
+  /* fps bar */
+  .fps-section {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .fps-label { font-size: .68rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .fps-bar-wrap { background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; }
+  .fps-bar-fill { height: 100%; border-radius: 4px; background: var(--green); transition: width .4s; }
+  .fps-num { margin-top: 5px; font-size: .8rem; font-variant-numeric: tabular-nums; color: var(--text); }
+
+  /* footer */
   footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 8px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    padding: 12px clamp(18px, 3vw, 34px);
-    border-top: 1px solid var(--line);
-    background: rgba(7, 10, 15, .76);
+    font-size: .72rem;
     color: var(--muted);
-    font-size: .76rem;
   }
 
-  @media (max-width: 1120px) {
+  @media (max-width: 768px) {
     main { grid-template-columns: 1fr; }
-    aside { align-self: auto; }
-    .tab-panel.active.overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .metric-card.compliance { grid-column: 1 / -1; }
-  }
-
-  @media (max-width: 720px) {
-    .topbar {
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .topbar-right {
-      width: 100%;
-      justify-content: space-between;
-      margin-left: 0;
-      flex-wrap: wrap;
-    }
-
-    main { padding: 14px; }
-    .workspace { grid-template-rows: auto minmax(280px, 58vh); }
-    .workspace-header { align-items: flex-start; flex-direction: column; }
-    .header-actions { justify-content: flex-start; }
-    .tabs { grid-template-columns: 1fr; }
-    .tab-panel.active.overview { grid-template-columns: 1fr; }
-    .score-card {
-      grid-template-columns: 52px minmax(0, 1fr);
-      min-height: 104px;
-      padding: 16px;
-    }
-    .score-note { display: none; }
-    .metric-head,
-    .compliance-score {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-    .metric-head span,
-    #compliance-text {
-      max-width: 100%;
-      text-align: left;
-    }
-    footer { flex-direction: column; align-items: flex-start; }
+    aside { border-left: none; border-top: 1px solid var(--border); }
+    .stats-grid { flex-direction: row; flex-wrap: wrap; }
+    .stat-card { flex: 1; min-width: 130px; }
   }
 </style>
 </head>
 <body>
-<div class="app-shell">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">EPI</div>
-      <div>
-        <span class="logo">EPI Detect</span>
-        <span class="subtitle">Visão computacional para segurança operacional.</span>
+
+<header>
+  <span class="logo">EPI DETECT</span>
+  <span class="badge {% if mode == 'LIVE' %}badge-live{% else %}badge-demo{% endif %}">{{ mode }}</span>
+  <div class="header-right">
+    <span id="clock"></span>
+    <span class="project-tag">MONITORAMENTO DE SEGURANCA</span>
+  </div>
+</header>
+
+<div id="alert-bar">&#9888; ATENCAO — Pessoa sem EPI detectada na area!</div>
+
+<main>
+  <div class="video-wrap" id="video-wrap">
+    <img id="stream" src="/video_feed" alt="feed">
+    <div class="video-overlay" id="fps-overlay">-- fps</div>
+    <div class="system-status" id="system-status">Inicializando camera e modelo...</div>
+    <button id="btn-fs"   title="Tela cheia">⛶</button>
+    <button id="btn-cfg"  title="Configurações">⚙</button>
+    <button id="btn-zone" title="Editor de Zonas">⬡</button>
+
+    <div id="fs-banner">
+      <div class="fs-badge">&#9888; Ambiente de Teste</div>
+      <div class="fs-title">Detector de Colete Refletor Verde</div>
+      <div class="fs-sub">
+        Este sistema identifica automaticamente colaboradores com ou sem colete de segurança.<br>
+        Nenhum dado pessoal é armazenado. Finalidade exclusiva de segurança do trabalho.
+      </div>
+      <div style="margin-top:10px;display:inline-flex;align-items:center;gap:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:6px 12px;">
+        <span style="font-size:.9rem;">&#9888;</span>
+        <span style="font-size:.78rem;color:#fca5a5;font-weight:600;">Demonstração em hardware sem GPU dedicada — pode apresentar lentidão. Desempenho real em produção é significativamente superior.</span>
       </div>
     </div>
-    <span class="mode-badge {% if mode == 'LIVE' %}badge-live{% else %}badge-demo{% endif %}">{{ mode }}</span>
-    <div class="topbar-right">
-      <span id="clock"></span>
-      <span class="chip"><span class="status-dot"></span>Monitoramento ativo.</span>
-    </div>
-  </header>
+  </div>
 
-  <div id="alert-bar">Atenção: pessoa sem EPI detectada na área monitorada.</div>
+  <aside>
+    <div class="section-title">Monitoramento</div>
 
-  <main>
-    <section class="workspace" aria-label="Vídeo monitorado">
-      <div class="workspace-header">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon green">&#10003;</div>
         <div>
-          <div class="eyebrow">Operação em tempo real.</div>
-          <h1>Câmera monitorada.</h1>
-          <p>Análise contínua de pessoas, coletes de segurança e conformidade da área.</p>
+          <div class="stat-label">COM EPI</div>
+          <div class="stat-value green" id="val-ok">0</div>
         </div>
-        <div class="header-actions">
-          <span class="chip">Transmissão: <span id="fps-overlay">-- FPS</span></span>
-          <span class="chip">Modo: {{ mode }}.</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red">&#9888;</div>
+        <div>
+          <div class="stat-label">SEM EPI</div>
+          <div class="stat-value red" id="val-bad">0</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">&#128100;</div>
+        <div>
+          <div class="stat-label">TOTAL DE PESSOAS</div>
+          <div class="stat-value blue" id="val-total">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:1px">Conformidade</div>
+    <div class="stat-card" style="flex-direction:column;align-items:flex-start;gap:8px;padding:16px 20px;">
+      <div class="stat-label">Taxa de conformidade</div>
+      <div style="width:100%;background:var(--border);border-radius:6px;height:10px;overflow:hidden">
+        <div id="compliance-bar" style="height:100%;border-radius:6px;background:var(--green);transition:width .5s;width:0%"></div>
+      </div>
+      <div id="compliance-pct" style="font-size:1.1rem;font-weight:700;color:var(--green)">--%</div>
+    </div>
+
+    <div class="section-title">Performance</div>
+    <div class="fps-section">
+      <div class="fps-label">Stream (display)</div>
+      <div class="fps-bar-wrap">
+        <div class="fps-bar-fill" id="fps-bar" style="width:0%"></div>
+      </div>
+      <div class="fps-num" id="fps-num">-- fps</div>
+      <div class="fps-label" style="margin-top:10px">Deteccao (YOLO)</div>
+      <div class="fps-bar-wrap">
+        <div class="fps-bar-fill" id="det-bar" style="width:0%;background:var(--blue)"></div>
+      </div>
+      <div class="fps-num" id="det-num">-- fps</div>
+    </div>
+
+    <div class="section-title">Eventos recentes</div>
+    <div class="log-area" id="log-area">
+      <div class="log-entry" style="color:var(--muted);font-size:.72rem">Aguardando deteccoes...</div>
+    </div>
+
+    <!-- card de aviso de hardware -->
+    <div style="margin:12px 16px 16px;background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.2);border-radius:8px;padding:12px 14px;">
+      <div style="font-size:.68rem;font-weight:700;color:#facc15;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">&#9888; Ambiente de Teste</div>
+      <div style="font-size:.72rem;color:#a3a3a3;line-height:1.55;">
+        Este PC <strong style="color:#e5e5e5;">não possui GPU dedicada</strong>.<br>
+        Eventuais travamentos no stream são limitação de hardware, não de configuração.<br>
+        <span style="color:#facc15;">Em produção: GPU dedicada entrega 25-30 FPS estáveis.</span>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Modal editor de zonas -->
+<div id="zone-modal">
+  <div id="zone-box">
+    <h2>⬡ Editor de Zonas de Segurança</h2>
+    <div class="cfg-sub">Clique no frame para definir os vértices da zona. Duplo-clique para fechar o polígono.</div>
+
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <!-- Canvas de desenho -->
+      <div style="position:relative;flex:1;min-width:220px;">
+        <canvas id="zone-canvas" style="border:1px solid #334155;border-radius:6px;cursor:crosshair;width:100%;"></canvas>
+        <div id="zone-canvas-hint" style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:.7rem;color:#64748b;pointer-events:none;white-space:nowrap;">
+          Clique para adicionar pontos · Duplo-clique para fechar
         </div>
       </div>
 
-      <div class="video-wrap">
-        <img id="stream" src="/video_feed" alt="Câmera monitorada">
-        <div class="video-hud">
-          <span class="hud-pill"><span class="status-dot"></span>Ao vivo.</span>
-          <span class="hud-pill">IA: YOLO.</span>
-          <button class="hud-button" type="button" id="fullscreen-button">Tela cheia.</button>
+      <!-- Painel lateral -->
+      <div style="flex:0 0 180px;">
+        <div class="cfg-section" style="margin-top:0">Nova Zona</div>
+        <div class="cfg-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <label>Nome</label>
+          <input type="text" id="z-name" placeholder="Ex: Área de Risco" style="width:100%">
         </div>
-        <div class="system-status" id="system-status">Inicializando câmera e modelo...</div>
+        <div class="cfg-row" style="flex-direction:column;align-items:flex-start;gap:4px;margin-top:8px;">
+          <label>EPIs obrigatórios</label>
+          <label style="color:#f1f5f9;font-size:.8rem;"><input type="checkbox" id="z-req-vest" checked> Colete</label>
+          <label style="color:#f1f5f9;font-size:.8rem;"><input type="checkbox" id="z-req-helmet"> Capacete</label>
+        </div>
+        <div class="cfg-row" style="flex-direction:column;align-items:flex-start;gap:4px;margin-top:8px;">
+          <label>Cor</label>
+          <select id="z-color" style="width:100%">
+            <option value="250,204,21">Amarelo</option>
+            <option value="239,68,68">Vermelho</option>
+            <option value="34,197,94">Verde</option>
+            <option value="99,102,241">Índigo</option>
+            <option value="249,115,22">Laranja</option>
+          </select>
+        </div>
+        <button id="z-save" style="width:100%;margin-top:12px;background:#6366f1;color:#fff;border:none;border-radius:7px;padding:8px;cursor:pointer;font-weight:600;">Salvar Zona</button>
+        <button id="z-clear" style="width:100%;margin-top:6px;background:#334155;color:#94a3b8;border:none;border-radius:7px;padding:8px;cursor:pointer;">Limpar Pontos</button>
+
+        <div class="cfg-section">Zonas Ativas</div>
+        <div id="zone-list" style="max-height:160px;overflow-y:auto;"></div>
       </div>
-    </section>
+    </div>
 
-    <aside aria-label="Indicadores de segurança">
-      <div class="side-head">
-        <div class="side-title">
-          <strong>Painel de controle.</strong>
-          <span>Indicadores, desempenho e eventos.</span>
-        </div>
-      </div>
-
-      <nav class="tabs" aria-label="Abas do painel">
-        <button class="tab-button active" type="button" data-tab="overview">Visão geral</button>
-        <button class="tab-button" type="button" data-tab="performance">Desempenho</button>
-        <button class="tab-button" type="button" data-tab="events">Eventos</button>
-      </nav>
-
-      <section class="tab-panel overview active" id="tab-overview">
-        <article class="score-card">
-          <div class="score-icon ok">OK</div>
-          <div>
-            <div class="label">Com EPI.</div>
-            <div class="value green" id="val-ok">0</div>
-          </div>
-          <span class="score-note">Seguro.</span>
-        </article>
-
-        <article class="score-card">
-          <div class="score-icon alert">!</div>
-          <div>
-            <div class="label">Sem EPI.</div>
-            <div class="value red" id="val-bad">0</div>
-          </div>
-          <span class="score-note">Atenção.</span>
-        </article>
-
-        <article class="score-card">
-          <div class="score-icon people">#</div>
-          <div>
-            <div class="label">Total de pessoas.</div>
-            <div class="value blue" id="val-total">0</div>
-          </div>
-          <span class="score-note">Cena.</span>
-        </article>
-
-        <article class="metric-card compliance">
-          <div class="metric-head">
-            <strong>Taxa de conformidade.</strong>
-            <span id="compliance-text">Sem pessoas na cena.</span>
-          </div>
-          <div class="bar-wrap">
-            <div id="compliance-bar" class="bar-fill"></div>
-          </div>
-          <div class="compliance-score">
-            <div id="compliance-pct">--%</div>
-            <span>Meta recomendada: 80%.</span>
-          </div>
-        </article>
-      </section>
-
-      <section class="tab-panel" id="tab-performance">
-        <article class="metric-card">
-          <div class="metric-head">
-            <strong>Transmissão de vídeo.</strong>
-            <span id="fps-num">-- FPS</span>
-          </div>
-          <div class="bar-wrap">
-            <div class="bar-fill" id="fps-bar"></div>
-          </div>
-        </article>
-
-        <article class="metric-card">
-          <div class="metric-head">
-            <strong>Detecção YOLO.</strong>
-            <span id="det-num">-- FPS</span>
-          </div>
-          <div class="bar-wrap">
-            <div class="bar-fill" id="det-bar" style="background: var(--blue);"></div>
-          </div>
-        </article>
-      </section>
-
-      <section class="tab-panel" id="tab-events">
-        <div class="log-area" id="log-area">
-          <div class="log-entry">Aguardando detecções...</div>
-        </div>
-      </section>
-
-      <section class="activity-panel" aria-label="Últimas detecções">
-        <div class="activity-head">
-          <strong>Últimas detecções.</strong>
-          <span>Horário do evento.</span>
-        </div>
-        <div class="timeline" id="timeline-log-area">
-          <div class="log-entry">Nenhuma detecção registrada ainda.</div>
-        </div>
-      </section>
-    </aside>
-  </main>
-
-  <footer>
-    <span>EPI Detect - Monitoramento de colete de segurança.</span>
-    <span>Tempo ativo: <span id="uptime">00:00:00</span></span>
-  </footer>
+    <div id="zone-msg" style="font-size:.78rem;min-height:16px;margin:8px 0 0;color:#4ade80;"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button id="zone-close" style="flex:1;background:#1e293b;border:1px solid #334155;color:#64748b;border-radius:7px;padding:8px;cursor:pointer;">Fechar</button>
+    </div>
+  </div>
 </div>
 
+<!-- Modal de configurações -->
+<div id="cfg-modal">
+  <div id="cfg-box">
+    <h2>⚙ Configurações</h2>
+    <div class="cfg-sub">Salvo em <code>settings_local.json</code> — não enviado ao Git</div>
+
+    <div id="hw-info" class="hw-badge">Carregando hardware...</div>
+
+    <div class="cfg-section">Câmera</div>
+    <div class="cfg-row">
+      <label>Fonte (índice ou URL)</label>
+      <input type="text" id="c-cam" placeholder="0 ou rtsp://...">
+    </div>
+    <div class="cfg-row">
+      <label>Resolução de captura</label>
+      <select id="c-res">
+        <option value="320x180">320 × 180 — PC fraco / baixo consumo</option>
+        <option value="640x360">640 × 360 — Intermediário</option>
+        <option value="640x480" selected>640 × 480 — Padrão (recomendado)</option>
+        <option value="1280x720">1280 × 720 — HD / Câmera IP</option>
+        <option value="1920x1080">1920 × 1080 — Full HD</option>
+      </select>
+    </div>
+
+    <div class="cfg-section">Performance</div>
+    <div class="cfg-row">
+      <label>Frame skip (YOLO a cada N)</label>
+      <input type="range" id="c-skip" min="1" max="16" step="1" value="4">
+      <span class="cfg-val" id="c-skip-val">4</span>
+    </div>
+    <div class="cfg-row">
+      <label>Stream FPS alvo</label>
+      <input type="range" id="c-fps" min="5" max="30" step="1" value="20">
+      <span class="cfg-val" id="c-fps-val">20</span>
+    </div>
+    <div class="cfg-row">
+      <label>Threads PyTorch</label>
+      <input type="range" id="c-threads" min="1" max="8" step="1" value="2">
+      <span class="cfg-val" id="c-threads-val">2</span>
+    </div>
+    <div class="cfg-row">
+      <label>OpenVINO (Intel iGPU)</label>
+      <input type="checkbox" id="c-ov">
+    </div>
+
+    <div class="cfg-section">Detecção</div>
+    <div class="cfg-row">
+      <label>Confiança mínima (pessoa)</label>
+      <input type="range" id="c-conf" min="0.05" max="0.70" step="0.01" value="0.15">
+      <span class="cfg-val" id="c-conf-val">0.15</span>
+    </div>
+    <div class="cfg-row">
+      <label>Cobertura mínima colete</label>
+      <input type="range" id="c-vest" min="0.01" max="0.20" step="0.005" value="0.03">
+      <span class="cfg-val" id="c-vest-val">0.03</span>
+    </div>
+
+    <div class="cfg-section">Identidade</div>
+    <div class="cfg-row">
+      <label>Nome da empresa</label>
+      <input type="text" id="c-company" placeholder="Minha Empresa">
+    </div>
+    <div class="cfg-row">
+      <label>Info hardware (tela)</label>
+      <input type="text" id="c-hw" placeholder="Detectado automaticamente">
+    </div>
+
+    <div id="cfg-msg"></div>
+    <div class="cfg-actions">
+      <button id="cfg-save">Salvar</button>
+      <button id="cfg-reset">Redefinir (auto)</button>
+      <button id="cfg-close">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>EPI Detect &mdash; Monitoramento de Colete de Seguranca</span>
+  <span id="uptime">00:00:00</span>
+</footer>
+
 <script>
+  // fullscreen
+  const wrap = document.getElementById('video-wrap');
+  const fsBanner = document.getElementById('fs-banner');
+  const btnFs = document.getElementById('btn-fs');
+
+  function updateFsBanner() {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement)
+                 || (window.innerHeight >= screen.height - 10 && window.outerHeight >= screen.height - 10);
+    fsBanner.classList.toggle('visible', isFs);
+  }
+  document.addEventListener('fullscreenchange', updateFsBanner);
+  document.addEventListener('webkitfullscreenchange', updateFsBanner);
+  window.addEventListener('resize', updateFsBanner);
+
+  btnFs.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      (wrap.requestFullscreen || wrap.webkitRequestFullscreen).call(wrap);
+      btnFs.textContent = '✕';
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      btnFs.textContent = '⛶';
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) btnFs.textContent = '⛶';
+  });
+
+  // relógio
   function tick() {
     const now = new Date();
     document.getElementById('clock').textContent =
@@ -835,6 +663,7 @@
   }
   setInterval(tick, 1000); tick();
 
+  // uptime
   const start = Date.now();
   setInterval(() => {
     const s = Math.floor((Date.now() - start) / 1000);
@@ -844,81 +673,35 @@
     document.getElementById('uptime').textContent = `${h}:${m}:${sec}`;
   }, 1000);
 
-  document.querySelectorAll('.tab-button').forEach((button) => {
-    button.addEventListener('click', () => {
-      const tab = button.dataset.tab;
-      document.querySelectorAll('.tab-button').forEach((item) => item.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
-      button.classList.add('active');
-      document.getElementById(`tab-${tab}`).classList.add('active');
-    });
-  });
-
-  const videoWrap = document.querySelector('.video-wrap');
-  const fullscreenButton = document.getElementById('fullscreen-button');
-
-  fullscreenButton.addEventListener('click', async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await videoWrap.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
-    } catch(e) {}
-  });
-
-  document.addEventListener('fullscreenchange', () => {
-    fullscreenButton.textContent = document.fullscreenElement ? 'Sair da tela cheia.' : 'Tela cheia.';
-  });
-
+  // stats poll
   const MAX_FPS = 30;
   const logArea = document.getElementById('log-area');
-  const timelineLogArea = document.getElementById('timeline-log-area');
   let lastBad = 0;
-
-  function formatDetectionEvent(count) {
-    if (count === 0) return 'Todos com EPI.';
-    if (count === 1) return '1 pessoa sem EPI detectada.';
-    return `${count} pessoas sem EPI detectadas.`;
-  }
-
-  function appendLogEntry(container, time, ok, message, maxItems) {
-    const entry = document.createElement('div');
-    entry.className = 'log-entry';
-    entry.innerHTML = `<span class="log-dot ${ok?'ok':'bad'}"></span>
-      <span><strong>${time}</strong> - ${message}</span>`;
-    if (container.firstChild && (
-      container.firstChild.textContent.includes('Aguardando') ||
-      container.firstChild.textContent.includes('Nenhuma')
-    )) {
-      container.innerHTML = '';
-    }
-    container.prepend(entry);
-    if (container.children.length > maxItems) container.removeChild(container.lastChild);
-  }
 
   async function fetchStats() {
     try {
       const r = await fetch('/stats');
       const d = await r.json();
 
-      document.getElementById('val-ok').textContent = d.with_vest;
-      document.getElementById('val-bad').textContent = d.without_vest;
+      document.getElementById('val-ok').textContent    = d.with_vest;
+      document.getElementById('val-bad').textContent   = d.without_vest;
       document.getElementById('val-total').textContent = d.total;
 
-      const fpsEl = document.getElementById('fps-bar');
+      // Stream FPS
+      const fpsEl  = document.getElementById('fps-bar');
       const fpsNum = document.getElementById('fps-num');
       const fpsPct = Math.min(d.fps / MAX_FPS * 100, 100);
       fpsEl.style.width = fpsPct + '%';
       fpsEl.style.background = d.fps >= 15 ? 'var(--green)' : d.fps >= 8 ? 'var(--yellow)' : 'var(--red)';
-      fpsNum.textContent = d.fps + ' FPS';
-      document.getElementById('fps-overlay').textContent = d.fps + ' FPS';
+      fpsNum.textContent = d.fps + ' fps';
+      document.getElementById('fps-overlay').textContent = d.fps + ' fps';
 
+      // estado do pipeline
       const statusEl = document.getElementById('system-status');
       const statusText = {
         starting: 'Inicializando sistema...',
-        waiting_camera: 'Aguardando câmera...',
-        loading_model: 'Câmera ativa. Carregando modelo de IA...',
+        waiting_camera: 'Aguardando camera...',
+        loading_model: 'Camera ativa. Carregando modelo de IA...',
         running: '',
         error: d.error || 'O pipeline encontrou um erro.'
       };
@@ -930,47 +713,299 @@
         statusEl.classList.remove('hidden');
         statusEl.classList.toggle('error', d.status === 'error');
       }
-
-      const detEl = document.getElementById('det-bar');
+      // Detection FPS
+      const detEl  = document.getElementById('det-bar');
       const detNum = document.getElementById('det-num');
-      const detPct = Math.min((d.det_fps || 0) / 15 * 100, 100);
+      const detPct = Math.min((d.det_fps||0) / 15 * 100, 100);
       detEl.style.width = detPct + '%';
-      detNum.textContent = (d.det_fps || 0) + ' FPS';
+      detNum.textContent = (d.det_fps||0) + ' fps';
 
+      // conformidade
       const pct = d.total > 0 ? Math.round(d.with_vest / d.total * 100) : null;
       const bar = document.getElementById('compliance-bar');
       const lbl = document.getElementById('compliance-pct');
-      const text = document.getElementById('compliance-text');
       if (pct !== null) {
         bar.style.width = pct + '%';
         bar.style.background = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
         lbl.style.color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
         lbl.textContent = pct + '%';
-        text.textContent = pct >= 80 ? 'Área em conformidade.' : pct >= 50 ? 'Atenção recomendada.' : 'Intervenção necessária.';
-      } else {
-        bar.style.width = '0%';
-        lbl.style.color = 'var(--muted)';
-        lbl.textContent = '--%';
-        text.textContent = 'Sem pessoas na cena.';
       }
 
+      // alerta
       const alertBar = document.getElementById('alert-bar');
       if (d.alert) alertBar.classList.add('show');
       else alertBar.classList.remove('show');
 
+      // log de evento quando SEM EPI muda
       if (d.without_vest !== lastBad && d.total > 0) {
         lastBad = d.without_vest;
         const time = new Date().toLocaleTimeString('pt-BR');
         const ok = d.without_vest === 0;
-        const message = formatDetectionEvent(d.without_vest);
-        appendLogEntry(logArea, time, ok, message, 20);
-        appendLogEntry(timelineLogArea, time, ok, message, 5);
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = `<span class="log-dot ${ok?'ok':'bad'}"></span>
+          <span>${time} — ${ok ? 'Todos com EPI' : d.without_vest + ' sem EPI detectado(s)'}</span>`;
+        if (logArea.firstChild && logArea.firstChild.textContent.includes('Aguardando'))
+          logArea.innerHTML = '';
+        logArea.prepend(entry);
+        if (logArea.children.length > 20) logArea.removeChild(logArea.lastChild);
       }
-    } catch(e) {}
+
+    } catch(e) { /* server reiniciando */ }
   }
 
   setInterval(fetchStats, 500);
   fetchStats();
+
+  // ── Editor de Zonas ─────────────────────────────────────────────────────
+  const zoneModal  = document.getElementById('zone-modal');
+  const zoneCanvas = document.getElementById('zone-canvas');
+  const zoneMsg    = document.getElementById('zone-msg');
+  const zoneList   = document.getElementById('zone-list');
+  const zCtx       = zoneCanvas.getContext('2d');
+  let   zPts       = [];   // pontos em coords normalizadas 0-1
+  let   zImg       = null; // snapshot do frame atual
+  let   zAllZones  = [];
+
+  // Carrega snapshot do frame atual para o canvas
+  async function zoneLoadFrame() {
+    return new Promise(res => {
+      const img = new Image();
+      img.onload = () => {
+        zoneCanvas.width  = img.naturalWidth  || 640;
+        zoneCanvas.height = img.naturalHeight || 360;
+        zCtx.drawImage(img, 0, 0);
+        zImg = img;
+        res();
+      };
+      img.onerror = res;
+      img.src = '/video_feed?' + Date.now(); // snapshot único (pode ser MJPEG frame)
+      // Fallback: usa dimensões fixas se MJPEG não carrega como <img>
+      setTimeout(() => { if (!zImg) { zoneCanvas.width=640; zoneCanvas.height=360; res(); } }, 2000);
+    });
+  }
+
+  function zRedraw() {
+    zCtx.clearRect(0, 0, zoneCanvas.width, zoneCanvas.height);
+    if (zImg) zCtx.drawImage(zImg, 0, 0, zoneCanvas.width, zoneCanvas.height);
+
+    // Zonas salvas
+    zAllZones.forEach(z => {
+      if (!z.points || z.points.length < 3) return;
+      const [r,g,b] = z.color || [250,204,21];
+      zCtx.strokeStyle = `rgb(${r},${g},${b})`;
+      zCtx.fillStyle   = `rgba(${r},${g},${b},0.15)`;
+      zCtx.lineWidth   = 2;
+      zCtx.beginPath();
+      z.points.forEach((p, i) => {
+        const px = p[0] * zoneCanvas.width, py = p[1] * zoneCanvas.height;
+        i === 0 ? zCtx.moveTo(px, py) : zCtx.lineTo(px, py);
+      });
+      zCtx.closePath();
+      zCtx.fill(); zCtx.stroke();
+      const cx = z.points.reduce((s,p)=>s+p[0],0)/z.points.length * zoneCanvas.width;
+      const cy = z.points.reduce((s,p)=>s+p[1],0)/z.points.length * zoneCanvas.height;
+      zCtx.fillStyle = `rgb(${r},${g},${b})`;
+      zCtx.font = 'bold 11px sans-serif';
+      zCtx.fillText(z.name || 'Zona', cx - 20, cy);
+    });
+
+    // Pontos em construção
+    if (zPts.length === 0) return;
+    const col = document.getElementById('z-color').value.split(',').map(Number);
+    zCtx.strokeStyle = `rgb(${col[0]},${col[1]},${col[2]})`;
+    zCtx.fillStyle   = `rgba(${col[0]},${col[1]},${col[2]},0.2)`;
+    zCtx.lineWidth   = 2;
+    zCtx.setLineDash([5, 4]);
+    zCtx.beginPath();
+    zPts.forEach((p, i) => {
+      const px = p[0] * zoneCanvas.width, py = p[1] * zoneCanvas.height;
+      i === 0 ? zCtx.moveTo(px, py) : zCtx.lineTo(px, py);
+    });
+    if (zPts.length > 2) { zCtx.closePath(); zCtx.fill(); }
+    zCtx.stroke();
+    zCtx.setLineDash([]);
+    zPts.forEach(p => {
+      zCtx.beginPath();
+      zCtx.arc(p[0]*zoneCanvas.width, p[1]*zoneCanvas.height, 4, 0, Math.PI*2);
+      zCtx.fillStyle = `rgb(${col[0]},${col[1]},${col[2]})`;
+      zCtx.fill();
+    });
+  }
+
+  zoneCanvas.addEventListener('click', e => {
+    const r = zoneCanvas.getBoundingClientRect();
+    const sx = zoneCanvas.width  / r.width;
+    const sy = zoneCanvas.height / r.height;
+    const nx = ((e.clientX - r.left) * sx) / zoneCanvas.width;
+    const ny = ((e.clientY - r.top)  * sy) / zoneCanvas.height;
+    zPts.push([nx, ny]);
+    zRedraw();
+  });
+  zoneCanvas.addEventListener('dblclick', async () => {
+    if (zPts.length < 3) return;
+    zPts.pop(); // remove o ponto duplicado do dblclick
+    await zoneSave();
+  });
+
+  async function zoneLoadList() {
+    try {
+      const r = await fetch('/api/zones');
+      zAllZones = await r.json();
+      zoneList.innerHTML = '';
+      zAllZones.forEach(z => {
+        const [r2,g2,b2] = z.color || [250,204,21];
+        const div = document.createElement('div');
+        div.className = 'zone-item';
+        div.innerHTML = `
+          <div class="zone-dot" style="background:rgb(${r2},${g2},${b2})"></div>
+          <span class="zone-name">${z.name} · ${(z.requires||[]).join('+')||'?'}</span>
+          <button class="zone-del" data-id="${z.id}" title="Remover">✕</button>`;
+        zoneList.appendChild(div);
+      });
+      zoneList.querySelectorAll('.zone-del').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await fetch('/api/zones', {method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({action:'delete', id: parseInt(btn.dataset.id)})});
+          await zoneLoadList(); zRedraw();
+          zoneMsg.textContent = 'Zona removida.';
+        });
+      });
+    } catch(e) {}
+  }
+
+  async function zoneSave() {
+    const name    = document.getElementById('z-name').value.trim() || `Zona ${zAllZones.length+1}`;
+    const requires = [];
+    if (document.getElementById('z-req-vest').checked)   requires.push('vest');
+    if (document.getElementById('z-req-helmet').checked) requires.push('helmet');
+    const color   = document.getElementById('z-color').value.split(',').map(Number);
+    try {
+      await fetch('/api/zones', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'add', name, points: zPts, requires, color}),
+      });
+      zPts = [];
+      zoneMsg.textContent = `✓ Zona "${name}" salva.`;
+      await zoneLoadList(); zRedraw();
+    } catch(e) { zoneMsg.textContent = 'Erro ao salvar.'; }
+  }
+
+  document.getElementById('btn-zone').addEventListener('click', async () => {
+    zoneModal.classList.add('open');
+    zoneMsg.textContent = '';
+    zPts = [];
+    await zoneLoadFrame();
+    await zoneLoadList();
+    zRedraw();
+  });
+  document.getElementById('zone-close').addEventListener('click', () => zoneModal.classList.remove('open'));
+  zoneModal.addEventListener('click', e => { if (e.target === zoneModal) zoneModal.classList.remove('open'); });
+  document.getElementById('z-save').addEventListener('click', async () => {
+    if (zPts.length < 3) { zoneMsg.textContent = 'Adicione pelo menos 3 pontos.'; return; }
+    await zoneSave();
+  });
+  document.getElementById('z-clear').addEventListener('click', () => { zPts = []; zRedraw(); });
+  document.getElementById('z-color').addEventListener('change', zRedraw);
+
+  // ── Painel de configurações ──────────────────────────────────────────────
+  const cfgModal = document.getElementById('cfg-modal');
+  const cfgMsg   = document.getElementById('cfg-msg');
+
+  function bindRange(id, valId) {
+    const el = document.getElementById(id);
+    const lbl = document.getElementById(valId);
+    el.addEventListener('input', () => lbl.textContent = el.value);
+  }
+  bindRange('c-skip',    'c-skip-val');
+  bindRange('c-fps',     'c-fps-val');
+  bindRange('c-threads', 'c-threads-val');
+  bindRange('c-conf',    'c-conf-val');
+  bindRange('c-vest',    'c-vest-val');
+
+  async function loadSettings() {
+    try {
+      const r = await fetch('/api/settings');
+      const d = await r.json();
+      const s = d.current;
+
+      // Hardware info
+      const hw = d.hardware;
+      const profileLabel = { low: 'Fraco', medium: 'Médio', high: 'Potente' }[hw.profile] || hw.profile;
+      document.getElementById('hw-info').innerHTML =
+        `<strong>CPU:</strong> ${hw.cpu_name} · ${hw.cores} cores` +
+        (hw.ram_gb ? ` · ${hw.ram_gb} GB RAM` : '') +
+        (hw.gpu_name ? ` · ${hw.gpu_name}` : '') +
+        `<span class="hw-profile ${hw.profile}">${profileLabel}</span>`;
+
+      // Preenche campos
+      document.getElementById('c-cam').value     = s.WEBCAM_INDEX ?? 0;
+      const res = `${s.WEBCAM_WIDTH}x${s.WEBCAM_HEIGHT}`;
+      const resEl = document.getElementById('c-res');
+      [...resEl.options].forEach(o => { if (o.value === res) o.selected = true; });
+
+      const setRange = (id, valId, val) => {
+        const el = document.getElementById(id);
+        el.value = val;
+        document.getElementById(valId).textContent = val;
+      };
+      setRange('c-skip',    'c-skip-val',    s.FRAME_SKIP    ?? 4);
+      setRange('c-fps',     'c-fps-val',     s.STREAM_FPS    ?? 20);
+      setRange('c-threads', 'c-threads-val', s.TORCH_THREADS ?? 2);
+      setRange('c-conf',    'c-conf-val',    parseFloat(s.CONF_THRESH ?? 0.15).toFixed(2));
+      setRange('c-vest',    'c-vest-val',    parseFloat(s.VEST_THRESH ?? 0.03).toFixed(3));
+
+      document.getElementById('c-ov').checked      = !!s.USE_OPENVINO;
+      document.getElementById('c-company').value   = s.COMPANY_NAME ?? '';
+      document.getElementById('c-hw').value        = s.HARDWARE_INFO ?? '';
+    } catch(e) {}
+  }
+
+  document.getElementById('btn-cfg').addEventListener('click', () => {
+    cfgModal.classList.add('open');
+    cfgMsg.textContent = '';
+    loadSettings();
+  });
+  document.getElementById('cfg-close').addEventListener('click', () => cfgModal.classList.remove('open'));
+  cfgModal.addEventListener('click', e => { if (e.target === cfgModal) cfgModal.classList.remove('open'); });
+
+  document.getElementById('cfg-save').addEventListener('click', async () => {
+    const [w, h] = document.getElementById('c-res').value.split('x').map(Number);
+    const camVal = document.getElementById('c-cam').value.trim();
+    const camSrc = /^\d+$/.test(camVal) ? parseInt(camVal) : camVal;
+
+    const payload = {
+      WEBCAM_INDEX:   camSrc,
+      WEBCAM_WIDTH:   w,
+      WEBCAM_HEIGHT:  h,
+      FRAME_SKIP:     parseInt(document.getElementById('c-skip').value),
+      STREAM_FPS:     parseInt(document.getElementById('c-fps').value),
+      TORCH_THREADS:  parseInt(document.getElementById('c-threads').value),
+      CONF_THRESH:    parseFloat(document.getElementById('c-conf').value),
+      VEST_THRESH:    parseFloat(document.getElementById('c-vest').value),
+      USE_OPENVINO:   document.getElementById('c-ov').checked,
+      COMPANY_NAME:   document.getElementById('c-company').value,
+      HARDWARE_INFO:  document.getElementById('c-hw').value,
+    };
+    try {
+      const r = await fetch('/api/settings', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+      });
+      const d = await r.json();
+      cfgMsg.className = d.needs_restart?.length ? 'warn' : '';
+      cfgMsg.textContent = d.message;
+    } catch(e) { cfgMsg.textContent = 'Erro ao salvar.'; }
+  });
+
+  document.getElementById('cfg-reset').addEventListener('click', async () => {
+    try {
+      await fetch('/api/settings/reset', { method: 'POST' });
+      cfgMsg.className = '';
+      cfgMsg.textContent = 'Redefinido! Reinicie para aplicar.';
+      loadSettings();
+    } catch(e) {}
+  });
 </script>
 </body>
 </html>

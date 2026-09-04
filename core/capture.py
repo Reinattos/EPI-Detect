@@ -3,7 +3,6 @@
 # Vídeo arquivo: leitura direta — threading não ajuda e adiciona overhead
 import threading
 import time
-from sys import platform
 
 import cv2
 
@@ -11,12 +10,22 @@ import cv2
 class VideoCapture:
     def __init__(self, source, width=None, height=None, fps=None):
         self._is_webcam = isinstance(source, int)
-        self._cap = self._open_capture(source)
+
+        if self._is_webcam:
+            # DSHOW no Windows entrega frames bem mais rapido que o MSMF padrao
+            self._cap = cv2.VideoCapture(source, cv2.CAP_DSHOW)
+            if not self._cap.isOpened():
+                self._cap = cv2.VideoCapture(source)
+        else:
+            self._cap = cv2.VideoCapture(source)
 
         if not self._cap.isOpened():
             raise RuntimeError(f"Não foi possível abrir: {source}")
 
         if self._is_webcam:
+            # MJPG: a webcam comprime no proprio hardware. Sem isso a maioria
+            # das cameras USB entrega YUYV cru e o barramento limita o FPS.
+            self._cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
             if width:
                 self._cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             if height:
@@ -37,22 +46,6 @@ class VideoCapture:
             deadline = time.monotonic() + 5.0
             while self._frame is None and time.monotonic() < deadline:
                 time.sleep(0.05)
-
-    def _open_capture(self, source):
-        if not isinstance(source, int):
-            return cv2.VideoCapture(source)
-
-        backends = [cv2.CAP_ANY]
-        if platform.startswith("win"):
-            backends = [cv2.CAP_DSHOW, cv2.CAP_MSMF, cv2.CAP_ANY]
-
-        for backend in backends:
-            cap = cv2.VideoCapture(source, backend)
-            if cap.isOpened():
-                return cap
-            cap.release()
-
-        return cv2.VideoCapture(source)
 
     def _reader(self):
         """Thread só usada na webcam."""

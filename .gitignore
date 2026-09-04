@@ -5,33 +5,33 @@ __pycache__/
 .ruff_cache/
 .venv/
 venv/
+env/
 
-# Segredos e configuracoes locais
-.env
-.env.*
-!.env.example
+# Configuracao especifica da maquina (cada instalacao tem a sua)
+settings_local.json
+
+# Zonas desenhadas na interface web
+zones.json
+
+# Pesos do modelo: baixados na primeira execucao, nao versionar
+*.pt
+*.onnx
+*.engine
+*_openvino_model/
+models/
+
+# Saidas de processamento
+*_epi.mp4
+output/
+runs/
+
+# Material de origem que pode conter pessoas ou ambientes privados
+input/
+raw/
 
 # IDE e sistema operacional
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
-
-# Resultados e logs
 *.log
-resultado*.mp4
-runs/
-
-# Dataset local: pode conter imagens pessoais
-dataset_epi/raw/**
-
-# Videos locais podem conter pessoas ou ambientes privados
-demo/*.mp4
-
-# Pesos gerados durante treinamento
-*.pt
-models/.cache/
-models/*.onnx
-models/*.engine
-models/*.xml
-models/*.bin
